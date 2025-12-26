@@ -1,93 +1,116 @@
-import { motion } from "framer-motion";
-import { CheckCircle, HandHeart, Users, Truck } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Check, Users, HeartHandshake, Utensils, ShieldCheck, UtensilsCrossed } from "lucide-react";
+import Navbar from "@/components/Navbar";
 
 const HowItWorks = () => {
+  const steps = [
+    {
+      icon: Utensils,
+      title: "1. Donors Post Food",
+      description: "Sharing surplus food made simple.",
+      features: [
+        "Donors list surplus food details",
+        "Quantity and freshness are verified",
+        "Pickup times are scheduled",
+        "Food safety standards maintained"
+      ]
+    },
+    {
+      icon: Users,
+      title: "2. Volunteers Connect",
+      description: "Bridging the gap safely.",
+      features: [
+        "Volunteers receive instant alerts",
+        "Optimized pickup routes provided",
+        "Strictly managed by Partner NGOs",
+        "Secure and traceable transport"
+      ]
+    },
+    {
+      icon: HeartHandshake,
+      title: "3. Delivering Hope",
+      description: "Feeding those in need.",
+      features: [
+        "Delivered directly to shelters",
+        "Delivery confirmation with photos",
+        "Meals distributed to recipients",
+        "Full impact tracking"
+      ]
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* HEADER SECTION */}
-      <section className="bg-green-600 text-white py-20 px-6 text-center">
-        <motion.h1
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-4xl font-bold"
-        >
-          How SharePlate Works
-        </motion.h1>
+    <div className="min-h-screen bg-background">
+      <Navbar />
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="mt-4 text-lg max-w-2xl mx-auto"
-        >
-          SharePlate connects donors, volunteers, and recipients to reduce food
-          waste and deliver meals to those who need them.
-        </motion.p>
+      {/* Hero Section - Increased padding for clear visibility */}
+      <section className="relative pt-20 pb-20 overflow-hidden text-center flex-grow-0">
+        <div className="absolute inset-0 gradient-hero opacity-10" />
+        <div className="container mx-auto px-4 relative z-10">
+          <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
+            <br />
+            <br />
+            How SharePlate <br />
+            <span className="gradient-primary bg-clip-text text-transparent">
+              Facilitates Change
+            </span>
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
+            A transparent, verified workflow ensuring surplus food reaches those who need it most.
+          </p>
+        </div>
       </section>
-
-      {/* STEPS SECTION */}
-      <section className="py-16 px-6 max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-3 gap-10">
-
-          {/* STEP 1 */}
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="p-8 bg-white rounded-2xl shadow-lg text-center"
-          >
-            <CheckCircle className="mx-auto h-14 w-14 text-green-600 mb-4" />
-            <h3 className="text-xl font-semibold mb-2">1. Donors Post Food</h3>
-            <p className="text-gray-600">
-              Hotels, homes, restaurants, or individuals can post leftover meals
-              that are still fresh and safe to eat.
-            </p>
-          </motion.div>
-
-          {/* STEP 2 */}
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="p-8 bg-white rounded-2xl shadow-lg text-center"
-          >
-            <Users className="mx-auto h-14 w-14 text-green-600 mb-4" />
-            <h3 className="text-xl font-semibold mb-2">2. Volunteers Claim Pickup</h3>
-            <p className="text-gray-600">
-              Verified volunteers see available donations and choose which ones
-              they want to pick up.
-            </p>
-          </motion.div>
-
-          {/* STEP 3 */}
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="p-8 bg-white rounded-2xl shadow-lg text-center"
-          >
-            <Truck className="mx-auto h-14 w-14 text-green-600 mb-4" />
-            <h3 className="text-xl font-semibold mb-2">3. Delivered to Recipients</h3>
-            <p className="text-gray-600">
-              Volunteers deliver the meals to nearby shelters, NGOs, or
-              registered needy families.
-            </p>
-          </motion.div>
+    <br />
+      {/* Steps Grid */}
+      <section className="py-10 pb-32 px-4 flex-grow">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid md:grid-cols-3 gap-8">
+            {steps.map((step, index) => (
+              <Card key={index} className="shadow-card hover:shadow-elevated transition-all duration-300 border-2 border-transparent hover:border-primary/50 bg-white">
+                <CardHeader>
+                  <div className="w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center mb-4">
+                    <step.icon className="w-8 h-8 text-primary-foreground" />
+                  </div>
+                  <CardTitle className="text-2xl">{step.title}</CardTitle>
+                  <CardDescription className="text-base">{step.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <ul className="space-y-3">
+                    {step.features.map((feature, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <span className="text-primary mt-0.5">
+                          {feature.includes("Strictly managed") ? <ShieldCheck className="w-5 h-5" /> : <Check className="w-5 h-5" />}
+                        </span>
+                        <span className={`text-base ${feature.includes("Strictly managed") ? "font-semibold text-primary" : "text-muted-foreground"}`}>
+                          {feature}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* JOIN SECTION */}
-      <section className="py-20 bg-green-600 text-white text-center">
-        <h2 className="text-3xl font-bold">Start Making a Difference Today</h2>
-        <p className="mt-3 mb-6">
-          Donate, volunteer, or receive — SharePlate welcomes everyone.
-        </p>
+      {/* Footer */}
+      <footer className="py-12 border-t border-border mt-auto">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center">
+                <UtensilsCrossed className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <span className="font-bold">SharePlate</span>
+            </div>
+            <p className="text-muted-foreground text-sm">
+              © 2025 SharePlate. Fighting food waste, one meal at a time.
+            </p>
+          </div>
+        </div>
+      </footer>
 
-        <a href="/auth">
-          <button className="px-8 py-3 bg-white text-green-700 font-semibold rounded-xl shadow hover:bg-gray-200">
-            Join Now
-          </button>
-        </a>
-      </section>
     </div>
   );
 };

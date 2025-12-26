@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\Asus\OneDrive\Desktop\Github\shareplate-nourish-connect-main\shareplate_backend\venv
+set VIRTUAL_ENV=d:\SharePlate_Final\shareplate_final\shareplate_backend\venv
 
 if not defined PROMPT set PROMPT=$P$G
 

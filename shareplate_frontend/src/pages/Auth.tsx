@@ -28,7 +28,7 @@ const Auth = () => {
   const roles = [
     { id: "donor" as const, label: "Donor", icon: UtensilsCrossed },
     { id: "recipient" as const, label: "Recipient", icon: Users },
-    { id: "volunteer" as const, label: "Volunteer", icon: Truck },
+
   ];
 
   // ⭐ SIGNUP HANDLER (Role Pass)
@@ -55,9 +55,7 @@ const Auth = () => {
         case "donor":
           navigate("/donor");
           break;
-        case "volunteer":
-          navigate("/volunteer");
-          break;
+
         case "recipient":
           navigate("/recipient");
           break;
@@ -81,9 +79,7 @@ const Auth = () => {
         case "donor":
           navigate("/donor");
           break;
-        case "volunteer":
-          navigate("/volunteer");
-          break;
+
         case "recipient":
           navigate("/recipient");
           break;
@@ -132,11 +128,10 @@ const Auth = () => {
                       type="button"
                       key={role.id}
                       onClick={() => setSelectedRole(role.id)}
-                      className={`p-3 rounded-lg border-2 transition-all hover:scale-105 ${
-                        selectedRole === role.id
+                      className={`p-3 rounded-lg border-2 transition-all hover:scale-105 ${selectedRole === role.id
                           ? "border-primary bg-primary/10"
                           : "border-border hover:border-primary/50"
-                      }`}
+                        }`}
                     >
                       <role.icon className="w-6 h-6 mx-auto mb-1 text-primary" />
                       <div className="text-xs font-medium">{role.label}</div>

@@ -2,14 +2,26 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import RoleCard from "@/components/RoleCard";
 import { Users, Package, Truck, UtensilsCrossed } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import heroImage from "@/assets/shareplate.png";
+import { useEffect } from "react";
 
 const Index = () => {
+  const { hash } = useLocation();
+
+  useEffect(() => {
+    if (hash) {
+      const element = document.querySelector(hash);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [hash]);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       {/* Hero Section */}
       <section className="relative pt-24 pb-20 overflow-hidden">
         <div className="absolute inset-0 gradient-hero opacity-10" />
@@ -17,7 +29,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6 animate-slide-up">
-              
+
               <span className="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm">
                 🌱 Reducing Food Waste Together
               </span>
@@ -35,7 +47,7 @@ const Index = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                
+
                 {/* JOIN NOW → SIGNUP PAGE */}
                 <Button
                   variant="hero"
@@ -54,7 +66,7 @@ const Index = () => {
 
             <div className="relative">
               <div className="absolute inset-0 gradient-primary opacity-20 blur-3xl rounded-full" />
-              <img 
+              <img
                 src={heroImage}
                 className="relative rounded-3xl shadow-elevated w-full animate-float"
                 alt="Community sharing food"
@@ -75,7 +87,7 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-16 max-w-4xl mx-auto">
             <RoleCard
               icon={UtensilsCrossed}
               title="Donor"
@@ -102,18 +114,7 @@ const Index = () => {
               route="/recipient"
             />
 
-            <RoleCard
-              icon={Truck}
-              title="Volunteer"
-              description="Deliver food"
-              features={[
-                "Pickup requests",
-                "Optimized routes",
-                "Impact badges",
-                "Help community",
-              ]}
-              route="/volunteer"
-            />
+
           </div>
         </div>
       </section>
