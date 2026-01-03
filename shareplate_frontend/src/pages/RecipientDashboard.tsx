@@ -1,26 +1,51 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import { Utensils, MapPin, Clock, CheckCircle, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { api, type DonationItem } from "@/lib/api";
+import { toast } from "sonner";
 
 const userName = localStorage.getItem("userName") || "User";
 
 const RecipientDashboard = () => {
-  const [foodList, setFoodList] = useState([
-    { id: 1, title: "Fresh Vegetables", donor: "Anita", quantity: "5 kg", status: "Available" },
-    { id: 2, title: "Baked Goods", donor: "Rahul", quantity: "20 items", status: "Available" },
-    { id: 3, title: "Cooked Meals", donor: "Ramesh", quantity: "10 plates", status: "Available" },
-  ]);
+  const [availableDonations, setAvailableDonations] = useState<DonationItem[]>([]);
+  const [myClaims, setMyClaims] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
-  const handleClaim = (id: number) => {
-    const updated = foodList.map((food) =>
-      food.id === id ? { ...food, status: "Claimed" } : food
-    );
-    setFoodList(updated);
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const [donations, claims] = await Promise.all([
+        api.getDonations(),
+        api.getRequests()
+      ]);
+      setAvailableDonations(donations);
+      setMyClaims(claims);
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+      toast.error("Failed to load dashboard data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleClaim = async (id: number) => {
+    try {
+      await api.createRequest(id);
+      toast.success("Donation claimed successfully! 🎉");
+      fetchData(); // Refresh data to update lists
+    } catch (error: any) {
+      console.error("Claim failed:", error);
+      toast.error(error.message || "Failed to claim donation");
+    }
   };
 
   const handleLogout = () => {
@@ -62,7 +87,7 @@ const RecipientDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold text-primary">
-                  {foodList.filter((f) => f.status === "Claimed").length}
+                  {myClaims.length}
                 </div>
               </CardContent>
             </Card>
@@ -75,7 +100,7 @@ const RecipientDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold text-secondary">
-                  {foodList.filter((f) => f.status === "Available").length}
+                  {availableDonations.length}
                 </div>
               </CardContent>
             </Card>
@@ -99,23 +124,30 @@ const RecipientDashboard = () => {
               <CardDescription>Click “Claim” to reserve your food items</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {foodList.map((food) => (
-                <div
-                  key={food.id}
-                  className="p-4 rounded-lg border-2 border-border hover:border-primary/50 transition-all flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-4">
-                    <Utensils className="w-6 h-6 text-primary" />
-                    <div>
-                      <h3 className="font-semibold text-lg">{food.title}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Donor: {food.donor} • {food.quantity}
-                      </p>
+              {loading ? (
+                <p>Loading donations...</p>
+              ) : availableDonations.length === 0 ? (
+                <p className="text-muted-foreground text-center py-4">No donations available right now.</p>
+              ) : (
+                availableDonations.map((food) => (
+                  <div
+                    key={food.id}
+                    className="p-4 rounded-lg border-2 border-border hover:border-primary/50 transition-all flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-4">
+                      <Utensils className="w-6 h-6 text-primary" />
+                      <div>
+                        <h3 className="font-semibold text-lg">{food.name}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {food.quantity} items • Expires: {food.expiry_date}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {food.address}
+                        </p>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="flex items-center gap-3">
-                    {food.status === "Available" ? (
+                    <div className="flex items-center gap-3">
                       <Button
                         variant="default"
                         className="bg-green-600 hover:bg-green-700 text-white"
@@ -123,19 +155,10 @@ const RecipientDashboard = () => {
                       >
                         Claim
                       </Button>
-                    ) : (
-                      <Button
-                        variant="secondary"
-                        disabled
-                        className="bg-gray-200 text-gray-600 flex items-center gap-1"
-                      >
-                        <CheckCircle className="w-4 h-4 text-green-600" />
-                        Claimed
-                      </Button>
-                    )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </CardContent>
           </Card>
 
@@ -162,13 +185,12 @@ const RecipientDashboard = () => {
                 <CardTitle>Recent Activity</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 text-sm text-muted-foreground">
-                {foodList
-                  .filter((f) => f.status === "Claimed")
-                  .map((f) => (
-                    <p key={f.id}>✅ You claimed {f.title} from {f.donor}</p>
-                  ))}
-                {foodList.filter((f) => f.status === "Claimed").length === 0 && (
+                {myClaims.length === 0 ? (
                   <p>No recent claims yet.</p>
+                ) : (
+                  myClaims.map((claim) => (
+                    <p key={claim.id}>✅ You claimed {claim.item_details?.name || 'Item'}</p>
+                  ))
                 )}
               </CardContent>
             </Card>

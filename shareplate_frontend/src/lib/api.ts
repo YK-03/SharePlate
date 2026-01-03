@@ -14,14 +14,14 @@ const getHeaders = (includeAuth = true): HeadersInit => {
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
   };
-  
+
   if (includeAuth) {
     const token = getAuthToken();
     if (token) {
       headers['Authorization'] = `Token ${token}`;
     }
   }
-  
+
   return headers;
 };
 
@@ -160,7 +160,7 @@ export const api = {
     return await response.json();
   },
 
-  async loginUser(email: string, password: string): Promise<{ token: string; user: User }> {
+  async loginUser(email: string, password: string): Promise<{ token: string; user: User; role?: string; name?: string }> {
     const response = await fetch(`${API_BASE_URL}/api-token-auth/`, {
       method: 'POST',
       headers: getHeaders(false),
@@ -172,11 +172,47 @@ export const api = {
       throw new Error(error.detail || error.message || 'Invalid credentials');
     }
 
-    const { token } = await response.json();
+    const { token, role, name } = await response.json();
     saveAuthToken(token); // Save token to be used in getMe
-    const user = await this.getMe(email);
 
-    return { token, user };
+    // We already have role and name from login, but let's fetch full user profile to be safe
+    // or just return the user object if getMe succeeds.
+    let user: User | any = {};
+    try {
+      user = await this.getMe(email);
+    } catch (e) {
+      console.warn("Could not fetch full user profile", e);
+    }
+
+    return { token, user, role, name };
+  },
+
+  async getRequests(): Promise<any[]> {
+    const response = await fetch(`${API_BASE_URL}/requests/`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch requests');
+    }
+
+    return await response.json();
+  },
+
+  async createRequest(itemId: number): Promise<any> {
+    const response = await fetch(`${API_BASE_URL}/requests/`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({ item_id: itemId }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to create request');
+    }
+
+    return await response.json();
   },
 
   async getMe(email: string): Promise<User> {

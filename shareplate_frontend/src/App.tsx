@@ -8,7 +8,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import DonorDashboard from "./pages/DonorDashboard";
 import RecipientDashboard from "./pages/RecipientDashboard";
-import VolunteerDashboard from "./pages/VolunteerDashboard";
+
 import HowItWorks from "./pages/HowItWorks";
 import SignupSuccess from "./pages/SignupSuccess";
 import NotFound from "./pages/NotFound";
@@ -33,7 +33,6 @@ const App = () => (
           {/* Dashboards */}
           <Route path="/donor" element={<DonorDashboard />} />
           <Route path="/recipient" element={<RecipientDashboard />} />
-          <Route path="/volunteer" element={<VolunteerDashboard />} />
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />

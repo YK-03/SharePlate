@@ -71,11 +71,16 @@ const Auth = () => {
 
   const handleLogin = async () => {
     try {
-      const { token, user } = await api.loginUser(email, password);
+      const { token, user, role, name } = await api.loginUser(email, password);
       saveAuthToken(token);
+      if (role) localStorage.setItem("userRole", role);
+      if (name) localStorage.setItem("userName", name);
+      console.log("Logged in with role:", role || user?.role);
+
+      const userRole = role || user?.role;
       alert("Logged in successfully!");
 
-      switch (user.role) {
+      switch (userRole) {
         case "donor":
           navigate("/donor");
           break;
@@ -129,8 +134,8 @@ const Auth = () => {
                       key={role.id}
                       onClick={() => setSelectedRole(role.id)}
                       className={`p-3 rounded-lg border-2 transition-all hover:scale-105 ${selectedRole === role.id
-                          ? "border-primary bg-primary/10"
-                          : "border-border hover:border-primary/50"
+                        ? "border-primary bg-primary/10"
+                        : "border-border hover:border-primary/50"
                         }`}
                     >
                       <role.icon className="w-6 h-6 mx-auto mb-1 text-primary" />

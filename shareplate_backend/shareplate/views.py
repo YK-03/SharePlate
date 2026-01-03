@@ -6,8 +6,8 @@ from rest_framework.views import APIView
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from django.db import transaction
-from .models import Item, UserProfile
-from .serializers import ItemSerializer, UserProfileSerializer
+from .models import Item, UserProfile, Request
+from .serializers import ItemSerializer, UserProfileSerializer, RequestSerializer
 from .filters import CustomInBBoxFilter
 from .notifications import send_donation_notification_to_volunteers
 import logging
@@ -26,8 +26,8 @@ class ItemListCreateView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     # Enable geographic filtering
-    filter_backends = [CustomInBBoxFilter]
-    bbox_filter_field = 'location' # The field to filter on
+    # filter_backends = [CustomInBBoxFilter]
+    # bbox_filter_field = 'location' # The field to filter on
 
     def perform_create(self, serializer):
         # Automatically set the donor to the current user when an item is created
@@ -47,6 +47,46 @@ class ItemListCreateView(generics.ListCreateAPIView):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class RequestListCreateView(generics.ListCreateAPIView):
+    """
+    API view to manage requests (claims).
+    - GET: List requests (Recipients see their own claims).
+    - POST: Create a request to claim an item.
+    """
+    serializer_class = RequestSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        # Recipients see only their own requests
+        return Request.objects.filter(requester=user)
+
+    def create(self, request, *args, **kwargs):
+        item_id = request.data.get('item_id')
+        if not item_id:
+            return Response({'error': 'Item ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            item = Item.objects.get(id=item_id)
+        except Item.DoesNotExist:
+            return Response({'error': 'Item not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        if not item.is_available:
+            return Response({'error': 'Item is not available'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create the request
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+             # Mark item as unavailable (since it's claimed)
+            with transaction.atomic():
+                instance = serializer.save(requester=self.request.user, item=item, status='Accepted') # Auto-accept for MVP claim flow
+                item.is_available = False
+                item.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserRegistrationView(APIView):
@@ -119,4 +159,9 @@ class ObtainAuthToken(APIView):
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
             
         token, created = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key})
+        # Return user role along with token
+        return Response({
+            'token': token.key,
+            'role': user.role,
+            'name': user.get_full_name() or user.email
+        })
