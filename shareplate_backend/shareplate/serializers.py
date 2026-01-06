@@ -12,7 +12,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return user
 
 class ItemSerializer(serializers.ModelSerializer):
-    donor_name = serializers.ReadOnlyField(source='donor.email')
+    donor_name = serializers.SerializerMethodField()
+
+    def get_donor_name(self, obj):
+        return obj.donor.email if obj.donor else "Unknown"
     
     class Meta:
         model = Item
@@ -20,10 +23,10 @@ class ItemSerializer(serializers.ModelSerializer):
         read_only_fields = ('donor', 'created_at', 'latitude', 'longitude')
 
 class RequestSerializer(serializers.ModelSerializer):
-    item_details = ItemSerializer(source='item', read_only=True)
-    requester_name = serializers.ReadOnlyField(source='requester.first_name')
-    
+    item_name = serializers.ReadOnlyField(source='item.name')
+    requester_email = serializers.ReadOnlyField(source='requester.email')
+
     class Meta:
         model = Request
-        fields = ('id', 'item', 'item_details', 'requester', 'requester_name', 'status', 'created_at')
+        fields = ('id', 'item', 'item_name', 'requester', 'requester_email', 'status', 'created_at')
         read_only_fields = ('requester', 'status', 'created_at')

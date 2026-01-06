@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, Users, HeartHandshake, Utensils, ShieldCheck, UtensilsCrossed } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import { Link } from "react-router-dom";
 
 const HowItWorks = () => {
   const steps = [
@@ -60,7 +61,7 @@ const HowItWorks = () => {
           </p>
         </div>
       </section>
-    <br />
+      <br />
       {/* Steps Grid */}
       <section className="py-10 pb-32 px-4 flex-grow">
         <div className="container mx-auto max-w-6xl">
@@ -98,12 +99,12 @@ const HowItWorks = () => {
       <footer className="py-12 border-t border-border mt-auto">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center">
                 <UtensilsCrossed className="w-5 h-5 text-primary-foreground" />
               </div>
               <span className="font-bold">SharePlate</span>
-            </div>
+            </Link>
             <p className="text-muted-foreground text-sm">
               © 2025 SharePlate. Fighting food waste, one meal at a time.
             </p>

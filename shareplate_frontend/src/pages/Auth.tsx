@@ -49,6 +49,8 @@ const Auth = () => {
         last_name: fullName.split(" ").slice(1).join(" "),
       });
       saveAuthToken(token);
+      localStorage.setItem("userRole", user.role || "");
+      localStorage.setItem("userName", user.first_name || "User");
       alert("Signed up successfully!");
 
       switch (user.role) {
@@ -75,12 +77,9 @@ const Auth = () => {
       saveAuthToken(token);
       if (role) localStorage.setItem("userRole", role);
       if (name) localStorage.setItem("userName", name);
-      console.log("Logged in with role:", role || user?.role);
-
-      const userRole = role || user?.role;
       alert("Logged in successfully!");
 
-      switch (userRole) {
+      switch (user.role) {
         case "donor":
           navigate("/donor");
           break;

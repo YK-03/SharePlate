@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
-import { Utensils, MapPin, Clock, CheckCircle, LogOut } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Utensils, MapPin, Clock, CheckCircle, LogOut, UtensilsCrossed } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
 import { api, type DonationItem } from "@/lib/api";
 import { toast } from "sonner";
 
@@ -34,7 +34,12 @@ const RecipientDashboard = () => {
   };
 
   useEffect(() => {
-    fetchData();
+    fetchData(); // Initial fetch
+
+    // Auto-refresh data every 10 seconds to show new donations automatically
+    const intervalId = setInterval(fetchData, 10000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   const handleClaim = async (id: number) => {
@@ -57,7 +62,12 @@ const RecipientDashboard = () => {
     <div className="min-h-screen bg-background">
       {/* Navbar */}
       <div className="flex justify-between items-center bg-white shadow-md px-6 py-4 fixed w-full top-0 z-10">
-        <h1 className="text-2xl font-semibold text-green-700">SharePlate 🍽️</h1>
+        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center">
+            <UtensilsCrossed className="w-6 h-6 text-primary-foreground" />
+          </div>
+          <span className="text-2xl font-bold">SharePlate</span>
+        </Link>
         <Button
           variant="outline"
           onClick={handleLogout}
