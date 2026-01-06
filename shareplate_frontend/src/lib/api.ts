@@ -2,30 +2,36 @@
  * API service for communicating with the SharePlate backend
  */
 
-const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL =
+  import.meta.env.VITE_BACKEND_API_URL || "http://localhost:8000/api";
 
-// Helper function to get auth token from localStorage
+/* =========================
+   AUTH HELPERS
+========================= */
+
 const getAuthToken = (): string | null => {
-  return localStorage.getItem('authToken');
+  return localStorage.getItem("authToken");
 };
 
-// Helper function to get default headers
 const getHeaders = (includeAuth = true): HeadersInit => {
   const headers: HeadersInit = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   };
 
   if (includeAuth) {
     const token = getAuthToken();
     if (token) {
-      headers['Authorization'] = `Token ${token}`;
+      headers["Authorization"] = `Token ${token}`;
     }
   }
 
   return headers;
 };
 
-// API response types
+/* =========================
+   TYPES
+========================= */
+
 export interface DonationItem {
   id: number;
   name: string;
@@ -38,10 +44,6 @@ export interface DonationItem {
   donor: string;
   latitude?: number;
   longitude?: number;
-  location?: {
-    type: string;
-    coordinates: number[];
-  };
 }
 
 export interface User {
@@ -49,7 +51,7 @@ export interface User {
   email: string;
   first_name: string;
   last_name: string;
-  role: 'donor' | 'recipient' | 'volunteer' | null;
+  role: "donor" | "recipient" | "volunteer" | null;
   phone_number?: string;
   email_notifications_enabled: boolean;
 }
@@ -69,132 +71,119 @@ export interface RegisterUserData {
   password: string;
   first_name?: string;
   last_name?: string;
-  role: 'donor' | 'recipient' | 'volunteer';
+  role: "donor" | "recipient" | "volunteer";
   phone_number?: string;
 }
 
-// API functions
+/* =========================
+   API METHODS
+========================= */
+
 export const api = {
-  // Donations/Items
+  /* -------- DONATIONS -------- */
+
   async createDonation(data: CreateDonationData): Promise<DonationItem> {
     const response = await fetch(`${API_BASE_URL}/items/`, {
-      method: 'POST',
+      method: "POST",
       headers: getHeaders(),
       body: JSON.stringify({
         name: data.name,
-        description: data.description || '',
+        description: data.description || "",
         quantity: data.quantity,
         expiry_date: data.expiry_date,
         address: data.address,
-        // Include location if coordinates are provided
-        ...(data.latitude && data.longitude && {
-          location: {
-            type: 'Point',
-            coordinates: [data.longitude, data.latitude] // GeoJSON format: [lng, lat]
-          }
-        })
+        ...(data.latitude &&
+          data.longitude && {
+            location: {
+              type: "Point",
+              coordinates: [data.longitude, data.latitude],
+            },
+          }),
       }),
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ detail: 'Failed to create donation' }));
-      throw new Error(error.detail || error.message || 'Failed to create donation');
-    }
-
-    const result = await response.json();
-    // Handle GeoJSON response
-    if (result.geometry && result.properties) {
-      const coords = result.geometry.coordinates;
-      return {
-        ...result.properties,
-        id: result.properties.id,
-        latitude: coords[1],
-        longitude: coords[0],
-        address: result.properties.address || data.address,
-      };
-    }
-    return result;
-  },
-
-  async getDonations(bbox?: string): Promise<DonationItem[]> {
-    const url = new URL(`${API_BASE_URL}/items/`);
-    if (bbox) {
-      url.searchParams.append('in_bbox', bbox);
-    }
-
-    const response = await fetch(url.toString(), {
-      method: 'GET',
-      headers: getHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch donations');
-    }
-
-    const data = await response.json();
-    // Handle GeoJSON FeatureCollection
-    if (data.type === 'FeatureCollection' && data.features) {
-      return data.features.map((feature: any) => ({
-        ...feature.properties,
-        id: feature.properties.id,
-        latitude: feature.geometry?.coordinates[1],
-        longitude: feature.geometry?.coordinates[0],
-      }));
-    }
-    return data;
-  },
-
-  // User management
-  async registerUser(data: RegisterUserData): Promise<{ user: User; token: string }> {
-    const response = await fetch(`${API_BASE_URL}/users/register/`, {
-      method: 'POST',
-      headers: getHeaders(false),
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ detail: 'Failed to register user' }));
-      throw new Error(error.detail || error.message || 'Failed to register user');
+      const error = await response.json();
+      throw new Error(error.detail || "Failed to create donation");
     }
 
     return await response.json();
   },
 
-  async loginUser(email: string, password: string): Promise<{ token: string; user: User; role?: string; name?: string }> {
-    const response = await fetch(`${API_BASE_URL}/api-token-auth/`, {
-      method: 'POST',
-      headers: getHeaders(false),
-      body: JSON.stringify({ email, password }),
-    });
+  async getDonations(bbox?: string): Promise<DonationItem[]> {
+    const url = new URL(`${API_BASE_URL}/items/`);
+    if (bbox) url.searchParams.append("in_bbox", bbox);
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ detail: 'Invalid credentials' }));
-      throw new Error(error.detail || error.message || 'Invalid credentials');
-    }
-
-    const { token, role, name } = await response.json();
-    saveAuthToken(token); // Save token to be used in getMe
-
-    // We already have role and name from login, but let's fetch full user profile to be safe
-    // or just return the user object if getMe succeeds.
-    let user: User | any = {};
-    try {
-      user = await this.getMe(email);
-    } catch (e) {
-      console.warn("Could not fetch full user profile", e);
-    }
-
-    return { token, user, role, name };
-  },
-
-  async getRequests(): Promise<any[]> {
-    const response = await fetch(`${API_BASE_URL}/requests/`, {
-      method: 'GET',
+    const response = await fetch(url.toString(), {
       headers: getHeaders(),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to fetch requests');
+      throw new Error("Failed to fetch donations");
+    }
+
+    const data = await response.json();
+
+    if (data.type === "FeatureCollection") {
+      return data.features.map((f: any) => ({
+        ...f.properties,
+        id: f.properties.id,
+        latitude: f.geometry?.coordinates[1],
+        longitude: f.geometry?.coordinates[0],
+      }));
+    }
+
+    return data;
+  },
+
+  /* -------- AUTH -------- */
+
+  async registerUser(
+    data: RegisterUserData
+  ): Promise<{ user: User; token: string }> {
+    const response = await fetch(`${API_BASE_URL}/users/register/`, {
+      method: "POST",
+      headers: getHeaders(false),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || "Registration failed");
+    }
+
+    return await response.json();
+  },
+
+  async loginUser(email: string, password: string) {
+    const response = await fetch(`${API_BASE_URL}/api-token-auth/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || "Invalid credentials");
+    }
+
+    const data = await response.json();
+
+    // ✅ SINGLE SOURCE OF TRUTH
+    localStorage.setItem("authToken", data.token);
+
+    return data;
+  },
+
+  /* -------- REQUESTS / CLAIMS -------- */
+
+  async getRequests(): Promise<any[]> {
+    const response = await fetch(`${API_BASE_URL}/requests/`, {
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch requests");
     }
 
     return await response.json();
@@ -202,62 +191,55 @@ export const api = {
 
   async createRequest(itemId: number): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/requests/`, {
-      method: 'POST',
+      method: "POST",
       headers: getHeaders(),
       body: JSON.stringify({ item_id: itemId }),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to create request');
+      throw new Error(error.error || "Failed to claim donation");
     }
 
     return await response.json();
   },
 
+  /* -------- USERS -------- */
+
   async getMe(email: string): Promise<User> {
     const response = await fetch(`${API_BASE_URL}/users/?email=${email}`, {
-      method: 'GET',
       headers: getHeaders(),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to fetch user data');
+      throw new Error("Failed to fetch user");
     }
 
     const users = await response.json();
-    if (users.length === 0) {
-      throw new Error('User not found');
-    }
     return users[0];
   },
 
   async getVolunteers(): Promise<User[]> {
     const response = await fetch(`${API_BASE_URL}/users/?role=volunteer`, {
-      method: 'GET',
       headers: getHeaders(),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to fetch volunteers');
+      throw new Error("Failed to fetch volunteers");
     }
 
     return await response.json();
   },
 };
 
-// Helper to save auth token
-export const saveAuthToken = (token: string) => {
-  localStorage.setItem('authToken', token);
-};
+/* =========================
+   AUTH UTILITIES
+========================= */
 
-// Helper to remove auth token
 export const removeAuthToken = () => {
-  localStorage.removeItem('authToken');
+  localStorage.removeItem("authToken");
 };
 
-// Helper to check if user is authenticated
 export const isAuthenticated = (): boolean => {
   return !!getAuthToken();
 };
-
