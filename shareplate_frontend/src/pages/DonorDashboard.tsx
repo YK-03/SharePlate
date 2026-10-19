@@ -137,7 +137,7 @@ const DonorDashboard = () => {
       }
     },
     onSuccess: () => {
-      toast.success(editingDonation ? "Donation updated." : "Donation published to the live network.");
+      toast.success(editingDonation ? "Donation updated." : "Donation posted successfully.");
       setForm({ name: "", description: "", quantity: 1, expiry_date: "", address: "" });
       setEditingDonation(null);
       queryClient.invalidateQueries({ queryKey: ["donations"] });
@@ -307,9 +307,9 @@ const DonorDashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <PlusCircle className="h-5 w-5 text-primary" />
-                {editingDonation ? "Edit donation" : "Publish a donation"}
+                {editingDonation ? "Edit donation" : "Post a donation"}
               </CardTitle>
-              <CardDescription>{editingDonation ? "Update the details below." : "Posts appear right away."}</CardDescription>
+              <CardDescription>{editingDonation ? "Update the details below." : "Visible to recipients once submitted."}</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -338,10 +338,10 @@ const DonorDashboard = () => {
                     {createDonationMutation.isPending
                       ? editingDonation
                         ? "Saving..."
-                        : "Publishing..."
+                        : "Posting..."
                       : editingDonation
                         ? "Save changes"
-                        : "Publish donation"}
+                        : "Post donation"}
                   </Button>
                   {editingDonation && (
                     <Button type="button" variant="outline" onClick={handleResetForm}>
@@ -403,7 +403,7 @@ const DonorDashboard = () => {
             <CardContent className="space-y-4">
               {activeRequests.length === 0 ? (
                 <p className="rounded-2xl border border-dashed border-border p-6 text-center text-muted-foreground">
-                  No request activity yet. Publish a donation to start the workflow.
+                  No claims yet. When someone requests your donation, their details will appear here.
                 </p>
               ) : (
                 recentRequests.map((request) => (
@@ -423,9 +423,8 @@ const DonorDashboard = () => {
                       </div>
                     </div>
                     <div className="mt-3 space-y-1 text-sm text-slate-600">
-                      <p>Claimed by: {request.requester?.first_name || request.requester?.email}</p>
-                      <p> {request.requester?.phone || "Not provided"}</p>
-                      <p> {request.requester?.email}</p>
+                      <p>Phone: {request.requester?.phone || "Not provided"}</p>
+                      <p>Email: {request.requester?.email}</p>
                     </div>
                     <div className="mt-4 grid gap-3 text-sm text-muted-foreground sm:grid-cols-3">
                       <div className="flex items-center gap-2">
@@ -466,7 +465,7 @@ const DonorDashboard = () => {
                   <Map locations={liveLocations} height="340px" />
                 ) : (
                   <p className="rounded-2xl border border-dashed border-border p-8 text-center text-muted-foreground">
-                    Publish a donation with an address to populate the live map.
+                    Enter a pickup address when posting a donation to see it on the map.
                   </p>
                 )}
               </CardContent>
@@ -478,7 +477,7 @@ const DonorDashboard = () => {
               </CardHeader>
               <CardContent className="space-y-3">
                 {allPostedDonations.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No donations published yet.</p>
+                  <p className="text-sm text-muted-foreground">No donations posted yet.</p>
                 ) : (
                   allPostedDonations.map((item) => (
                     <div key={item.id} className="flex items-center justify-between rounded-2xl bg-muted/60 px-4 py-3">

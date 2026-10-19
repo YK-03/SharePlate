@@ -48,13 +48,13 @@ def _sync_delivery_to_request(delivery):
 
 def _build_tracking_note(status):
     notes = {
-        'pending': 'Request accepted. Waiting for volunteer assignment.',
-        'assigned': 'Volunteer assigned and heading to pickup location.',
-        'picked': 'Food picked up successfully.',
-        'delivering': 'Volunteer is on the way.',
-        'delivered': 'Delivery completed.',
+        'pending': 'Claim confirmed. Awaiting pickup coordination.',
+        'assigned': 'Pickup scheduled.',
+        'picked': 'Food collected from donor.',
+        'delivering': 'Food in transit.',
+        'delivered': 'Delivered successfully.',
     }
-    return notes.get(status, 'Live update in progress.')
+    return notes.get(status, 'Status update in progress.')
 
 
 def _simulate_progress_coordinates(delivery):
@@ -320,7 +320,7 @@ class RequestListCreateView(generics.ListCreateAPIView):
             Delivery.objects.create(
                 request=created_request,
                 status='pending',
-                tracking_note='Request accepted. Offline delivery to be organized.',
+                tracking_note='Claim confirmed. Please coordinate pickup with the donor.',
             )
 
 
@@ -449,8 +449,8 @@ class VerifyUserView(APIView):
             html = f"""
             <html>
                 <body style="font-family: sans-serif; padding: 40px; text-align: center;">
-                    <h2 style="color: #16a34a;">✅ User verified successfully.</h2>
-                    <p><b>{user.first_name} {user.last_name}</b> ({user.email}) has been approved on SharePlate.</p>
+                    <h2 style="color: #16a34a;">Account Approved</h2>
+                    <p><b>{user.first_name} {user.last_name}</b> ({user.email}) has been approved on SharePlate and can now log in.</p>
                 </body>
             </html>
             """
@@ -459,8 +459,8 @@ class VerifyUserView(APIView):
             html = """
             <html>
                 <body style="font-family: sans-serif; padding: 40px; text-align: center;">
-                    <h2 style="color: #dc2626;">❌ Verification Failed</h2>
-                    <p>Invalid or expired verification link.</p>
+                    <h2 style="color: #dc2626;">Verification Link Invalid</h2>
+                    <p>This verification link is invalid or has already been used.</p>
                 </body>
             </html>
             """

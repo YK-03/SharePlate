@@ -41,8 +41,8 @@ const Auth = () => {
 
   const roles = useMemo(
     () => [
-      { id: "donor" as const, label: "Donor", icon: UtensilsCrossed, hint: "Publish surplus food in minutes." },
-      { id: "recipient" as const, label: "Recipient", icon: Users, hint: "Claim urgent meals near you." },
+      { id: "donor" as const, label: "Donor", icon: UtensilsCrossed, hint: "Share surplus food for pickup." },
+      { id: "recipient" as const, label: "Recipient", icon: Users, hint: "Find and claim available food." },
     ],
     []
   );
@@ -107,15 +107,15 @@ const Auth = () => {
               <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
                 <UtensilsCrossed className="h-6 w-6" />
               </span>
-              SharePlate Control Network
+              SharePlate Community
             </Link>
             <div className="space-y-4">
-              <p className="text-sm uppercase tracking-[0.26em] text-emerald-300">Real-time community logistics</p>
+              <p className="text-sm uppercase tracking-[0.26em] text-emerald-300">Community Food Rescue</p>
               <h1 className="max-w-xl text-5xl font-semibold leading-tight">
-                Coordinate food rescue with live claims, delivery ops, and role-based workspaces.
+                Share surplus food with people nearby, or find meals for your community.
               </h1>
               <p className="max-w-lg text-lg text-white/74">
-                Donors publish inventory and recipients claim nearby meals from one shared network.
+                Donors post extra food and recipients arrange quick, direct pickups.
               </p>
             </div>
           </div>
@@ -140,9 +140,9 @@ const Auth = () => {
                 </div>
                 <span className="text-xl font-semibold">SharePlate</span>
               </Link>
-              <CardTitle className="text-3xl">{isSignUp ? "Create your role workspace" : "Continue to your dashboard"}</CardTitle>
+              <CardTitle className="text-3xl">{isSignUp ? "Create your SharePlate account" : "Log in to your account"}</CardTitle>
               <CardDescription>
-                {isSignUp ? "Start as a donor or recipient." : "Log in to view live activity and respond in real time."}
+                {isSignUp ? "Sign up as a donor or recipient." : "Log in to manage your donations and claims."}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -191,7 +191,7 @@ const Auth = () => {
                   </div>
 
                   <Button type="submit" variant="hero" size="lg" className="w-full" disabled={isSubmitting}>
-                    {isSubmitting ? "Creating workspace..." : "Create account"}
+                    {isSubmitting ? "Creating account..." : "Create account"}
                   </Button>
                 </form>
               ) : (
@@ -207,13 +207,13 @@ const Auth = () => {
                   </div>
 
                   <Button onClick={handleLogin} variant="hero" size="lg" className="w-full" disabled={isSubmitting}>
-                    {isSubmitting ? "Authenticating..." : "Login"}
+                    {isSubmitting ? "Logging in..." : "Login"}
                   </Button>
                 </div>
               )}
 
               <div className="rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 text-sm text-emerald-900">
-                Live features included: auto-refreshing dashboards, delivery tracking, and network activity metrics.
+                Note: New accounts require admin approval before posting or claiming food.
               </div>
 
               <div className="text-center text-sm">

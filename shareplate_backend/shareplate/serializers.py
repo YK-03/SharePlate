@@ -142,13 +142,13 @@ class RequestSerializer(serializers.ModelSerializer):
 
     def get_tracking_message(self, obj):
         status_messages = {
-            'pending': "Recipient requested food. Waiting for a volunteer assignment.",
-            'assigned': "Volunteer assigned and heading to pickup location.",
-            'picked': "Volunteer picked up the food and preparing delivery route.",
-            'delivering': "Volunteer is on the way to the recipient.",
+            'pending': "Claim confirmed. Awaiting pickup coordination.",
+            'assigned': "Pickup scheduled.",
+            'picked': "Food collected from donor.",
+            'delivering': "Food in transit to destination.",
             'delivered': "Food delivered successfully.",
         }
-        return status_messages.get(obj.delivery_status, "Live update in progress.")
+        return status_messages.get(obj.delivery_status, "Status update in progress.")
 
     def get_delivery(self, obj):
         delivery = getattr(obj, 'delivery_record', None)

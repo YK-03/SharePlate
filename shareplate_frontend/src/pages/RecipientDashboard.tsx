@@ -44,7 +44,7 @@ const deliveryStepMeta: Array<{
   icon: typeof Package;
 }> = [
   { key: "pending", label: "Claim confirmed", shortLabel: "Claimed", icon: CheckCircle2 },
-  { key: "assigned", label: "Delivery organizing", shortLabel: "Organizing", icon: Users },
+  { key: "assigned", label: "Pickup scheduled", shortLabel: "Scheduled", icon: Users },
   { key: "picked", label: "Picked up", shortLabel: "Picked", icon: Package },
   { key: "delivering", label: "On the way", shortLabel: "On route", icon: Truck },
   { key: "delivered", label: "Delivered", shortLabel: "Delivered", icon: CheckCircle2 },
@@ -90,7 +90,7 @@ const getEtaLabel = (request: DeliveryRequest) => {
     case "delivered":
       return "Completed";
     default:
-      return "Live update pending";
+      return "Pending update";
   }
 };
 
@@ -346,7 +346,7 @@ const RecipientDashboard = () => {
             }
           : request.item_details,
       });
-      toast.success("Donation claimed. Live delivery tracking is now active.");
+      toast.success("Meal claimed! Pickup address and route directions are available below.");
       queryClient.invalidateQueries({ queryKey: ["donations"] });
       queryClient.invalidateQueries({ queryKey: ["requests"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-summary"] });
@@ -378,7 +378,7 @@ const RecipientDashboard = () => {
       setClaimedRequestPreview(null);
       setClaimedDonationPreview(null);
       setClaimPickupLocation(null);
-      toast.success(editingDonation ? "Donation updated successfully." : "Donation posted successfully. It is now live in the rescue feed.");
+      toast.success(editingDonation ? "Donation updated." : "Donation posted. It is now visible to nearby recipients.");
       setDonationForm({
         name: "",
         description: "",
@@ -733,7 +733,7 @@ const RecipientDashboard = () => {
 
           <div className="hidden items-center gap-3 md:flex">
             <div className="rounded-2xl bg-orange-50 px-4 py-2 text-sm text-orange-700">
-              Viewing available donations
+              Recipient Portal
             </div>
             <Button variant="outline" onClick={logout}>
               <LogOut className="mr-2 h-4 w-4" />
@@ -845,8 +845,8 @@ const RecipientDashboard = () => {
 
             <Card className="rounded-[1.5rem] border-amber-200 bg-amber-50 shadow-none">
               <CardContent className="p-5">
-                <p className="text-sm font-semibold text-amber-900">For NGOs</p>
-                <p className="mt-2 text-sm leading-6 text-amber-900/90">Please confirm food quality and pickup details directly before distribution.</p>
+                <p className="text-sm font-semibold text-amber-900">Food Safety Notice</p>
+                <p className="mt-2 text-sm leading-6 text-amber-900/90">Please inspect food packaging and confirm pickup details directly with the donor before distribution.</p>
               </CardContent>
             </Card>
 
@@ -857,7 +857,7 @@ const RecipientDashboard = () => {
                     <div>
                       <p className="text-sm font-medium uppercase tracking-[0.18em] text-orange-600">Post food</p>
                       <h2 className="mt-1 text-2xl font-semibold">{editingDonation ? "Edit donation" : "Create a donation"}</h2>
-                      <p className="mt-2 text-sm text-muted-foreground">{editingDonation ? "Update the details below." : "This goes live right away."}</p>
+                      <p className="mt-2 text-sm text-muted-foreground">{editingDonation ? "Update the details below." : "Enter meal details to post surplus food."}</p>
                     </div>
                   </div>
 
@@ -932,7 +932,7 @@ const RecipientDashboard = () => {
                           Cancel
                         </Button>
                       )}
-                      <span className="text-sm text-muted-foreground">Goes live right away.</span>
+                      <span className="text-sm text-muted-foreground">Visible immediately after posting.</span>
                     </div>
                   </form>
                 </CardContent>
@@ -1120,7 +1120,7 @@ const RecipientDashboard = () => {
               ) : feedDonations.length === 0 ? (
                 <Card className="rounded-[2rem] border-none bg-white shadow-soft">
                   <CardContent className="p-10 text-center text-muted-foreground">
-                    No meals match this filter right now. Try another category or check back soon.
+                    No meals match your search right now. Try another keyword or check back soon.
                   </CardContent>
                 </Card>
               ) : (
@@ -1269,7 +1269,7 @@ const RecipientDashboard = () => {
                 </div>
                 <div className="mt-5 space-y-4">
                   {compactClaims.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No active claims right now. Delivered orders are cleared from this panel.</p>
+                    <p className="text-sm text-muted-foreground">No active claims right now. Completed claims are archived.</p>
                   ) : (
                     compactClaims.map((claim) => (
                       <div key={claim.id} className="rounded-3xl bg-[#f8fafc] p-4">

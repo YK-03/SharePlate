@@ -235,7 +235,7 @@ const Map = ({
       if (movingMarker.description) {
         movingMarkerRef.current.bindPopup(`
           <div style="padding:8px;max-width:220px;">
-            <h3 style="margin:0 0 6px 0;font-weight:700;font-size:14px;">${movingMarker.label || "Courier live"}</h3>
+            <h3 style="margin:0 0 6px 0;font-weight:700;font-size:14px;">${movingMarker.label || "Pickup vehicle"}</h3>
             <p style="margin:0;color:#666;font-size:13px;">${movingMarker.description}</p>
           </div>
         `);

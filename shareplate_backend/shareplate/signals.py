@@ -12,10 +12,10 @@ def send_admin_verification_email(sender, instance, created, **kwargs):
 
         BASE_URL = config('BASE_URL', default='http://localhost:8000')
 
-        subject = f"New {instance.role.capitalize()} Registration: Pending Verification"
+        subject = f"New {instance.role.capitalize()} Registration: Pending Approval"
         html_content = f"""
-        <h2>New {instance.role.capitalize()} Registration — Pending Verification</h2>
-        <p>A new {instance.role} has registered on SharePlate and is waiting for verification.</p>
+        <h2>New {instance.role.capitalize()} Registration — Pending Approval</h2>
+        <p>A new {instance.role} has registered on SharePlate and requires approval before posting or claiming food.</p>
         <ul>
             <li><b>Name:</b> {instance.first_name} {instance.last_name}</li>
             <li><b>Email:</b> {instance.email}</li>
@@ -25,7 +25,7 @@ def send_admin_verification_email(sender, instance, created, **kwargs):
         <a href="{BASE_URL}/api/verify-user/{instance.verification_token}/" 
            style="background:#16a34a;color:white;padding:10px 20px;
                   border-radius:6px;text-decoration:none;display:inline-block;">
-          Verify Now
+          Approve Account
         </a>
         """
 

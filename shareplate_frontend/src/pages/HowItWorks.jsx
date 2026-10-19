@@ -8,34 +8,34 @@ const HowItWorks = () => {
     {
       icon: Utensils,
       title: "1. Donors Post Food",
-      description: "Sharing surplus food made simple.",
+      description: "List extra food with pickup details.",
       features: [
-        "Donors list surplus food details",
-        "Quantity and freshness are verified",
-        "Pickup times are scheduled",
-        "Food safety standards maintained"
+        "Specify meal portions and best-before date",
+        "Set pickup address and available times",
+        "Add food handling and packaging notes",
+        "Listings appear immediately for local recipients"
       ]
     },
     {
       icon: Users,
-      title: "2. NGOs Organize",
-      description: "Managing logistics offline.",
+      title: "2. Recipients Claim Meals",
+      description: "Browse nearby food and reserve portions.",
       features: [
-        "NGOs coordinate volunteer pickups",
-        "Optimized delivery schedules",
-        "Strictly managed by Partner NGOs",
-        "Secure and traceable transport"
+        "Browse available food on an interactive map",
+        "Claim meals before expiration",
+        "View donor contact info and pickup address",
+        "Get driving directions and routes via OSRM"
       ]
     },
     {
       icon: HeartHandshake,
-      title: "3. Delivering Hope",
-      description: "Feeding those in need.",
+      title: "3. Pickup & Confirmation",
+      description: "Collect food and confirm handover.",
       features: [
-        "Delivered directly to shelters",
-        "Delivery confirmation with photos",
-        "Meals distributed to recipients",
-        "Full impact tracking"
+        "Pick up food directly from the donor",
+        "Coordinate timing directly if needed",
+        "Confirm receipt on the dashboard",
+        "Keep records of completed community handovers"
       ]
     }
   ];
@@ -53,11 +53,11 @@ const HowItWorks = () => {
             <br />
             How SharePlate <br />
             <span className="gradient-primary bg-clip-text text-transparent">
-              Facilitates Change
+              Works
             </span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-            A transparent, verified workflow ensuring surplus food reaches those who need it most.
+            A simple, transparent process connecting surplus food with people who need it.
           </p>
         </div>
       </section>
@@ -80,9 +80,9 @@ const HowItWorks = () => {
                     {step.features.map((feature, i) => (
                       <li key={i} className="flex items-start gap-3">
                         <span className="text-primary mt-0.5">
-                          {feature.includes("Strictly managed") ? <ShieldCheck className="w-5 h-5" /> : <Check className="w-5 h-5" />}
+                          <Check className="w-5 h-5" />
                         </span>
-                        <span className={`text-base ${feature.includes("Strictly managed") ? "font-semibold text-primary" : "text-muted-foreground"}`}>
+                        <span className="text-base text-muted-foreground">
                           {feature}
                         </span>
                       </li>
@@ -106,7 +106,7 @@ const HowItWorks = () => {
               <span className="font-bold">SharePlate</span>
             </Link>
             <p className="text-muted-foreground text-sm">
-              © 2025 SharePlate. Fighting food waste, one meal at a time.
+              © 2026 SharePlate. Connecting surplus food with local communities.
             </p>
           </div>
         </div>

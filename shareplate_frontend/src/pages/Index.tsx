@@ -43,9 +43,7 @@ const Index = () => {
               </h1>
 
               <p className="text-xl text-muted-foreground">
-SharePlate is a community-driven food rescue platform that bridges the gap between surplus and scarcity by connecting food donors with verified NGOs.
-
-
+                SharePlate connects businesses and households with surplus food to local recipients and community groups who can make use of it.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -81,7 +79,7 @@ SharePlate is a community-driven food rescue platform that bridges the gap betwe
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">Choose Your Role</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Whether you have food to share...
+              Sign up as a donor to share food, or as a recipient to find and collect meals.
             </p>
           </div>
 
@@ -89,12 +87,11 @@ SharePlate is a community-driven food rescue platform that bridges the gap betwe
             <RoleCard
               icon={UtensilsCrossed}
               title="Donor"
-              description="Share surplus food"
+              description="Donate extra meals and ingredients"
               features={[
-                "Post donations",
-                "Pickup times",
-                "Track impact",
-                "Community connection",
+                "List available food in minutes",
+                "Set pickup address and times",
+                "Track claims and completed handovers",
               ]}
               route="/auth?mode=signup&role=donor"
             />
@@ -102,12 +99,11 @@ SharePlate is a community-driven food rescue platform that bridges the gap betwe
             <RoleCard
               icon={Users}
               title="Recipient"
-              description="Access free food"
+              description="Find and request available meals"
               features={[
-                "Browse donations",
-                "Claim items",
-                "Notifications",
-                "Connect donors",
+                "Browse nearby donations on the map",
+                "Claim available food with one click",
+                "View pickup directions and donor details",
               ]}
               route="/auth?mode=signup&role=recipient"
             />
@@ -121,10 +117,10 @@ SharePlate is a community-driven food rescue platform that bridges the gap betwe
       <section className="py-20 gradient-hero">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold mb-4 text-primary-foreground">
-            Ready to Make a Difference?
+            Help Food Reach People, Not Landfills
           </h2>
           <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto mb-8">
-            Join thousands of community members fighting food waste and hunger together.
+            Start sharing surplus food or finding meals in your local community today.
           </p>
           <Button asChild size="lg" className="bg-card text-foreground hover:bg-card/90">
             <Link to="/auth?mode=signup">Get Started Today</Link>
@@ -142,7 +138,7 @@ SharePlate is a community-driven food rescue platform that bridges the gap betwe
               <span className="font-bold text-lg">SharePlate</span>
             </Link>
             <p className="text-muted-foreground text-sm">
-              © 2025 SharePlate. Fighting food waste, one meal at a time.
+              © 2026 SharePlate. Connecting surplus food with local communities.
             </p>
           </div>
         </div>
